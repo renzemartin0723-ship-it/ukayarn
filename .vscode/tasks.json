@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Ukayarn server",
+      "type": "shell",
+      "command": "C:\\xampp\\php\\php.exe -S localhost:8000",
+      "group": { "kind": "build", "isDefault": true },
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

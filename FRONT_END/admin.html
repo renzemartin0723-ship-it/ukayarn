@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ukayarn Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff; --soft: #f6f6f6; --ink: #0a0a0a; --mut: #777; --line: #e6e6e6; --inv: #fff;
+      --ok: #1e8e4e; --bad: #c0392b;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #111; --soft: #1b1b1b; --ink: #f3f3f3; --mut: #9a9a9a; --line: #2c2c2c; --inv: #0a0a0a; --ok: #4cc38a; --bad: #ff7b6b; }
+    }
+    :root[data-theme="dark"] { --bg: #111; --soft: #1b1b1b; --ink: #f3f3f3; --mut: #9a9a9a; --line: #2c2c2c; --inv: #0a0a0a; --ok: #4cc38a; --bad: #ff7b6b; }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 'Plus Jakarta Sans', system-ui, sans-serif; }
+    button, input { font: inherit; }
+    button { cursor: pointer; border: 0; background: none; color: inherit; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .logo { display: flex; gap: 8px; align-items: center; font-weight: 800; font-size: 18px; }
+    .logo i { width: 24px; height: 24px; background: var(--ink); color: var(--inv); border-radius: 6px; font-style: normal; display: grid; place-items: center; font-size: 12px; }
+    .logo small { font-weight: 700; color: var(--mut); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+
+    .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .top .wrap { display: flex; justify-content: space-between; align-items: center; height: 60px; }
+    .live { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--mut); }
+    .live b::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--ok); }
+
+    .bk { background: var(--ink); color: var(--inv); border-radius: 99px; padding: 9px 18px; font-weight: 700; font-size: 14px; }
+    .bk.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+    .sm { padding: 5px 12px; font-size: 12px; }
+    .bk:disabled { opacity: .4; cursor: default; }
+
+    .stats { display: grid; grid-template-columns: 1.6fr repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+    .stat { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: var(--bg); }
+    .stat.big { background: var(--ink); color: var(--inv); }
+    .stat span { font-size: 12px; color: var(--mut); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .stat.big span { color: var(--inv); opacity: .7; }
+    .stat b { display: block; font-size: 26px; font-weight: 800; margin-top: 4px; }
+    .stat.big b { font-size: 36px; }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tabs button { padding: 8px 16px; border-radius: 99px; border: 1px solid var(--line); font-weight: 700; font-size: 13px; color: var(--mut); }
+    .tabs .a { background: var(--ink); color: var(--inv); border-color: var(--ink); }
+
+    .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; margin-bottom: 48px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; background: var(--soft); color: var(--mut); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    tr:last-child td { border-bottom: 0; }
+    td small { color: var(--mut); display: block; }
+    .empty { padding: 32px; text-align: center; color: var(--mut); }
+
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; background: var(--soft); border: 1px solid var(--line); white-space: nowrap; }
+    .pill.ok { color: var(--ok); }
+    .pill.bad { color: var(--bad); }
+    td input { width: 70px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
+
+    .login { max-width: 360px; margin: 14vh auto; padding: 28px; border: 1px solid var(--line); border-radius: 20px; display: grid; gap: 12px; }
+    .login input { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); }
+    .err { color: var(--bad); font-size: 12px; min-height: 16px; }
+    .toast { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--inv); padding: 12px 18px; border-radius: 14px; font-weight: 700; display: none; z-index: 9; }
+
+    @media (max-width: 800px) { .stats { grid-template-columns: 1fr 1fr; } .stat.big { grid-column: 1 / -1; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const peso = (n) => '₱' + Number(n).toLocaleString();
+
+    async function api(action, body) {
+      const opts = body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {};
+      const res = await fetch(`../BACK_END/api.php?action=${action}`, opts);
+      const data = await res.json().catch(() => ({ error: 'Server error. Is XAMPP (Apache + MySQL) running?' }));
+      if (!res.ok) throw Object.assign(new Error(data.error || 'Something went wrong.'), { status: res.status });
+      return data;
+    }
+
+    const EVENTS = {
+      signup: 'Created account', login: 'Logged in', logout: 'Logged out',
+      add_to_cart: 'Added to cart', order: 'Placed order (paid)', cancel: 'Cancelled order'
+    };
+    const TABS = [['activity', 'Activity feed'], ['orders', 'Orders & revenue'], ['stock', 'Stock manager'], ['users', 'Accounts']];
+
+    let data = null;
+    let tab = 'activity';
+    let shownRevenue = 0;
+    let knownOrders = null;
+    let timer = null;
+
+    function toast(msg) {
+      const el = $('#toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(toast.t);
+      toast.t = setTimeout(() => { el.style.display = 'none'; }, 3500);
+    }
+
+    // ------------------------------------------------------------ login
+    function showLogin(error = '') {
+      clearInterval(timer);
+      $('#app').innerHTML = `
+        <div class="login">
+          <div class="logo"><i>U</i>Ukayarn <small>Admin</small></div>
+          <input id="u" placeholder="Admin username" autocomplete="username">
+          <input id="p" type="password" placeholder="Password" autocomplete="current-password">
+          <div class="err" id="er">${esc(error)}</div>
+          <button class="bk" id="go">LOG IN</button>
+        </div>`;
+      const submit = async () => {
+        try {
+          await api('admin_login', { id: $('#u').value.trim(), password: $('#p').value });
+          start();
+        } catch (err) {
+          $('#er').textContent = err.message;
+        }
+      };
+      $('#go').onclick = submit;
+      $('#p').onkeydown = (e) => { if (e.key === 'Enter') submit(); };
+    }
+
+    async function logout() {
+      await api('logout', {}).catch(() => {});
+      data = null;
+      knownOrders = null;
+      showLogin();
+    }
+
+    // ------------------------------------------------------------ dashboard shell
+    function showShell() {
+      $('#app').innerHTML = `
+        <header class="top"><div class="wrap">
+          <div class="logo"><i>U</i>Ukayarn <small>Admin</small></div>
+          <div class="live"><b>Live · updates every 5s</b><button class="bk ghost sm" onclick="logout()">Log out</button></div>
+        </div></header>
+        <main class="wrap">
+          <section class="stats" id="stats"></section>
+          <nav class="tabs" id="tabs"></nav>
+          <div id="panel"></div>
+        </main>`;
+    }
+
+    function countUp(el, to) {
+      const from = shownRevenue;
+      shownRevenue = to;
+      const start = performance.now();
+      (function step(now) {
+        const k = Math.min(1, (now - start) / 700);
+        el.textContent = peso(Math.round(from + (to - from) * k));
+        if (k < 1) requestAnimationFrame(step);
+      })(start);
+    }
+
+    function renderStats() {
+      const s = data.stats;
+      const cards = [
+        ['Customers', s.customers], ['Paid orders', s.orders],
+        ['In stock', s.in_stock], ['Out of stock', s.out_of_stock]
+      ];
+      $('#stats').innerHTML =
+        `<div class="stat big"><span>Revenue (money in)</span><b id="rev">${peso(shownRevenue)}</b></div>` +
+        cards.map(([label, n]) => `<div class="stat"><span>${label}</span><b>${n}</b></div>`).join('');
+      countUp($('#rev'), s.revenue);
+    }
+
+    function renderTabs() {
+      $('#tabs').innerHTML = TABS
+        .map(([id, label]) => `<button class="${id === tab ? 'a' : ''}" onclick="tab='${id}';render()">${label}</button>`)
+        .join('');
+    }
+
+    const table = (head, rows) => rows.length
+      ? `<div class="tw"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`
+      : '<div class="tw"><div class="empty">Nothing here yet.</div></div>';
+
+    // ------------------------------------------------------------ panels
+    const panels = {
+      activity: () => table(['Time', 'Who', 'What happened', 'Details'], data.activity.map((a) => `
+        <tr><td>${esc(a.created_at)}</td><td><b>${esc(a.username)}</b></td>
+        <td><span class="pill ${a.type === 'cancel' ? 'bad' : a.type === 'order' ? 'ok' : ''}">${EVENTS[a.type] || esc(a.type)}</span></td>
+        <td>${esc(a.detail)}</td></tr>`)),
+
+      orders: () => table(['Order #', 'Customer', 'Items', 'Total', 'Payment', 'Status', 'Date', ''], data.orders.map((o) => `
+        <tr><td><b>${esc(o.ref)}</b></td>
+        <td>${esc(o.n)}<small>@${esc(o.u)} · ${esc(o.phone)}</small></td>
+        <td>${o.items.map((i) => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td>
+        <td><b>${peso(o.total)}</b>${o.disc ? `<small>voucher -${peso(o.disc)}</small>` : ''}</td>
+        <td>${esc(o.pay)}</td>
+        <td><span class="pill ${o.status === 'Cancelled' ? 'bad' : 'ok'}">${o.status === 'Cancelled' ? 'Cancelled' : 'Paid · ' + esc(o.status)}</span></td>
+        <td>${esc(o.at)}</td>
+        <td>${o.status === 'Cancelled' ? '' : `<button class="bk ghost sm" onclick="cancelOrder('${esc(o.ref)}')">Cancel</button>`}</td></tr>`)),
+
+      stock: () => table(['Item', 'Category', 'Seller', 'Price', 'Qty', 'Status', ''], data.items.map((i) => `
+        <tr><td><b>${esc(i.name)}</b></td><td>${esc(i.cat)}</td><td>${esc(i.seller)}</td><td>${peso(i.price)}</td>
+        <td><input type="number" min="0" id="q${i.id}" value="${i.qty}" aria-label="Quantity"></td>
+        <td><span class="pill ${i.qty < 1 ? 'bad' : 'ok'}">${i.qty < 1 ? 'Out of stock' : 'In stock'}</span></td>
+        <td><button class="bk sm" onclick="saveStock(${i.id})">Save</button></td></tr>`)),
+
+      users: () => table(['Username', 'Email', 'Role', 'Paid orders', 'Joined'], data.users.map((u) => `
+        <tr><td><b>${esc(u.username)}</b></td><td>${esc(u.email)}</td>
+        <td><span class="pill">${u.role === 'admin' ? 'Admin' : Number(u.is_seller) ? 'Buyer + Seller' : 'Buyer'}</span></td>
+        <td>${u.orders}</td><td>${esc(u.created_at)}</td></tr>`))
+    };
+
+    function render() {
+      renderTabs();
+      $('#panel').innerHTML = panels[tab]();
+    }
+
+    // ------------------------------------------------------------ actions
+    async function cancelOrder(ref) {
+      if (!confirm(`Cancel order ${ref}? The items go back to stock.`)) return;
+      try {
+        await api('cancel_order', { ref });
+        toast(`${ref} cancelled · items returned to stock`);
+        refresh();
+      } catch (err) { toast(err.message); }
+    }
+
+    async function saveStock(id) {
+      try {
+        await api('set_stock', { id, quantity: Number($('#q' + id).value) });
+        toast('Stock updated');
+        refresh();
+      } catch (err) { toast(err.message); }
+    }
+
+    // ------------------------------------------------------------ live refresh
+    async function refresh() {
+      try {
+        data = await api('dashboard');
+      } catch (err) {
+        if (err.status === 401 || err.status === 403) showLogin(err.status === 403 ? err.message : '');
+        return;
+      }
+      // Announce incoming money from orders we have not seen yet.
+      const refs = new Set(data.orders.map((o) => o.ref));
+      if (knownOrders) {
+        data.orders.filter((o) => !knownOrders.has(o.ref)).forEach((o) => toast(`+${peso(o.total)} incoming · ${o.ref} from @${o.u}`));
+      }
+      knownOrders = refs;
+
+      renderStats();
+      // Do not rebuild the stock table while someone is typing a quantity.
+      if (!(tab === 'stock' && document.activeElement && document.activeElement.tagName === 'INPUT')) render();
+    }
+
+    function start() {
+      showShell();
+      refresh();
+      timer = setInterval(refresh, 5000);
+    }
+
+    // Already logged in as admin? Go straight to the dashboard.
+    api('dashboard').then(start).catch(() => showLogin());
+  </script>
+</body>
+</html>

@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ukayarn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff;
+      --soft: #f6f6f6;
+      --ink: #0a0a0a;
+      --mut: #777;
+      --line: #e6e6e6;
+      --inv: #fff;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #111;
+        --soft: #1b1b1b;
+        --ink: #f3f3f3;
+        --mut: #9a9a9a;
+        --line: #2c2c2c;
+        --inv: #0a0a0a;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #111;
+      --soft: #1b1b1b;
+      --ink: #f3f3f3;
+      --mut: #9a9a9a;
+      --line: #2c2c2c;
+      --inv: #0a0a0a;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 15px/1.5 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      color: inherit;
+      background: none;
+    }
+
+    svg {
+      display: block;
+      flex: none;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .hero {
+      background: radial-gradient(#ffffff26 1px, transparent 1.5px) 0 0/22px 22px, linear-gradient(#0a0a0a 55%, var(--bg));
+      color: #fff;
+      padding: 20px 24px 110px;
+      text-align: center;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .logo i {
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 6px;
+      font-style: normal;
+      display: grid;
+      place-items: center;
+      color: #0a0a0a;
+      font-size: 12px;
+    }
+
+    .icons {
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 99px;
+      padding: 8px 18px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .icons button,
+    .nav button {
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .cnt {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: #0a0a0a;
+      color: #fff;
+      border-radius: 99px;
+      font-size: 10px;
+      min-width: 16px;
+      height: 16px;
+      line-height: 16px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(64px, 15vw, 150px);
+      letter-spacing: -.05em;
+      line-height: 1.12;
+      margin: 48px 0 0;
+      font-weight: 800;
+    }
+
+    .hero p {
+      color: #ccc;
+      margin: 20px 0 44px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .pills {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #fff;
+      color: #0a0a0a;
+      border: 1px solid #fff;
+    }
+
+    .pill.d {
+      background: #0a0a0a;
+      color: #fff;
+      border-color: #555;
+    }
+
+    .search {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 0;
+      font: inherit;
+      background: #fff;
+      color: #0a0a0a;
+    }
+
+    .nav {
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translate(-50%, -160%);
+      opacity: 0;
+      transition: .3s;
+      background: #0a0a0acc;
+      backdrop-filter: blur(10px);
+      border-radius: 99px;
+      padding: 5px;
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      z-index: 30;
+      border: 1px solid #333;
+      color: #fff;
+      max-width: calc(100vw - 16px);
+    }
+
+    .nav.on {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .nav a {
+      color: #bbb;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    .nav a.a {
+      background: #fff;
+      color: #0a0a0a;
+    }
+
+    .nav .av {
+      margin-right: 4px;
+    }
+
+    .nav .bg {
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 99px;
+      padding: 7px 12px;
+      margin-left: 4px;
+      flex-direction: row;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .av {
+      width: 32px;
+      height: 32px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: #fff;
+      color: #0a0a0a;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      overflow: hidden;
+      flex: none;
+    }
+
+    .av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .feat {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 32px;
+      padding: 48px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .feat b {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .feat span {
+      color: var(--mut);
+      font-size: 13px;
+      display: block;
+    }
+
+    section {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: clamp(30px, 5vw, 44px);
+      letter-spacing: -.03em;
+      margin: 0 0 24px;
+      font-weight: 800;
+    }
+
+    .sur {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 760px) {
+      .sur {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sc {
+      background: #0a0a0a;
+      color: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sc h3 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .sc small {
+      color: #aaa;
+    }
+
+    .sc select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      font: inherit;
+      background: #222;
+      color: #fff;
+    }
+
+    .btn {
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 8px;
+      padding: 11px;
+      font-weight: 800;
+    }
+
+    .bk {
+      background: var(--ink);
+      color: var(--inv);
+      border-radius: 99px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .bk:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+
+    .bk.ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .out {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      min-height: 200px;
+    }
+
+    .empty {
+      height: 100%;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: var(--mut);
+      font-size: 13px;
+    }
+
+    .empty b {
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .ob {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 12px;
+    }
+
+    .ob em {
+      font-style: normal;
+      color: var(--mut);
+      margin-left: 8px;
+    }
+
+    .og {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .oi {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .th {
+      width: 58px;
+      height: 58px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      flex: none;
+      color: #3a3a3a;
+      overflow: hidden;
+    }
+
+    .th img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .oi div {
+      min-width: 0;
+    }
+
+    .oi small {
+      color: var(--mut);
+      font-size: 11px;
+    }
+
+    .oi b,
+    .oi span {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 2px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      padding: 4px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .tabs button {
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--mut);
+    }
+
+    .tabs .a {
+      background: var(--ink);
+      color: var(--inv);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--bg);
+    }
+
+    .card .im {
+      height: 170px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+      color: #3a3a3a;
+      overflow: hidden;
+    }
+
+    .card .im img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #fff;
+      color: #0a0a0a;
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      z-index: 1;
+    }
+
+    .card h4 {
+      margin: 4px 0 0;
+      font-size: 14px;
+    }
+
+    .card small {
+      color: var(--mut);
+      font-size: 12px;
+    }
+
+    .pr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .pr b {
+      font-size: 22px;
+    }
+
+    .add {
+      background: var(--ink);
+      color: var(--inv);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .add:disabled {
+      background: var(--line);
+      color: var(--mut);
+      cursor: default;
+    }
+
+    .sold .im {
+      filter: grayscale(1);
+      opacity: .5;
+    }
+
+    .acc {
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ac {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--soft);
+    }
+
+    .ac button {
+      width: 100%;
+      text-align: left;
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .ac button span:first-child {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ac div {
+      display: none;
+      padding: 0 18px 16px;
+      font-size: 13px;
+      color: var(--mut);
+    }
+
+    .ac.o {
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .ac.o div {
+      display: block;
+      color: #ccc;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    @media (max-width: 760px) {
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    footer {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 56px 24px;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      flex-wrap: wrap;
+      padding: 0;
+    }
+
+    footer p {
+      color: #bbb;
+      max-width: 300px;
+      font-size: 13px;
+    }
+
+    footer h5 {
+      margin: 0 0 8px;
+    }
+
+    footer a {
+      display: block;
+      color: #bbb;
+      font-size: 13px;
+      text-decoration: none;
+      margin: 4px 0;
+      cursor: pointer;
+    }
+
+    .ov {
+      position: fixed;
+      inset: 0;
+      background: #000a;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .ov.on {
+      display: flex;
+    }
+
+    .md {
+      background: var(--bg);
+      border-radius: 18px;
+      max-width: 460px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+      padding: 24px;
+      position: relative;
+    }
+
+    .md.w {
+      max-width: 720px;
+      padding: 0;
+    }
+
+    .md.w2 {
+      max-width: 900px;
+      padding: 0;
+    }
+
+    .md h3 {
+      margin: 0 0 12px;
+    }
+
+    .x {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      z-index: 2;
+    }
+
+    .dr {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(400px, 100%);
+      background: var(--bg);
+      z-index: 60;
+      transform: translateX(105%);
+      transition: .3s;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--line);
+    }
+
+    .dr.on {
+      transform: none;
+    }
+
+    .ci {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ci > div:nth-child(2) {
+      flex: 1;
+    }
+
+    .lst {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .f {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .f input,
+    .f textarea {
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .pm {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pm button {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .pm .a {
+      background: var(--ink);
+      color: var(--inv);
+    }
+
+    .ref {
+      font: 800 26px monospace;
+      background: var(--soft);
+      border: 1px dashed var(--mut);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin: 12px 0;
+    }
+
+    .st {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--mut);
+      margin: 14px 0;
+    }
+
+    .st span.a {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .err {
+      color: #d33;
+      font-size: 12px;
+      min-height: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: var(--inv);
+      padding: 10px 20px;
+      border-radius: 99px;
+      font-size: 13px;
+      z-index: 80;
+      display: none;
+    }
+
+    .fl {
+      position: fixed;
+      top: calc(17px + env(safe-area-inset-top, 0px));
+      left: max(24px, calc((100vw - 1100px)/2));
+      transform: translateY(-200%);
+      opacity: 0;
+      transition: .3s;
+      background: #0a0a0acc;
+      backdrop-filter: blur(10px);
+      border: 1px solid #333;
+      border-radius: 99px;
+      padding: 5px 14px 5px 6px;
+      color: #fff;
+      z-index: 30;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fl.on {
+      transform: none;
+      opacity: 1;
+    }
+
+    .fl i {
+      width: 24px;
+      height: 24px;
+      background: #fff;
+      border-radius: 7px;
+      font-style: normal;
+      display: grid;
+      place-items: center;
+      color: #0a0a0a;
+      font-size: 12px;
+    }
+
+    .tt {
+      position: fixed;
+      right: 20px;
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #0a0a0a;
+      color: #fff;
+      border: 1px solid #444;
+      display: grid;
+      place-items: center;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: .3s;
+    }
+
+    .tt.on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .rs {
+      background: none;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    @media (max-width: 700px) {
+      .fl {
+        display: none;
+      }
+    }
+
+    .sa {
+      font-size: 13px;
+      color: var(--mut);
+      text-decoration: underline;
+    }
+
+    .hd2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .rst {
+      font-size: 12px;
+      color: #aaa;
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .rst.l {
+      color: var(--mut);
+    }
+
+    #shop {
+      display: none;
+      padding: 90px 0 48px;
+    }
+
+    .fb {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .fb input,
+    .fb select {
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--soft);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .fb input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .hold {
+      display: block;
+      color: var(--mut);
+      font-size: 11px;
+    }
+
+    .au {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 360px;
+    }
+
+    .al {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      border-radius: 18px 0 0 18px;
+    }
+
+    .al .logo {
+      justify-content: flex-start;
+    }
+
+    .al .big {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: #fff;
+      color: #0a0a0a;
+      font-size: 28px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 12px;
+    }
+
+    .al p {
+      color: #bbb;
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+
+    .al .ab {
+      display: flex;
+      justify-content: space-between;
+      font: 10px monospace;
+      color: #888;
+    }
+
+    .ar {
+      padding: 24px;
+    }
+
+    .seg {
+      display: inline-flex;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      padding: 3px;
+      margin-bottom: 18px;
+    }
+
+    .seg button {
+      padding: 6px 16px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .seg .a {
+      background: var(--ink);
+      color: var(--inv);
+    }
+
+    .ar h3 {
+      margin: 0;
+    }
+
+    .ar small {
+      color: var(--mut);
+    }
+
+    .ar .bk {
+      width: 100%;
+      border-radius: 10px;
+      padding: 13px;
+    }
+
+    .ar .ln {
+      background: none;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .au {
+        grid-template-columns: 1fr;
+      }
+      .al {
+        display: none;
+      }
+    }
+
+    .dt {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .dl {
+      padding: 20px;
+      background: var(--soft);
+      border-radius: 18px 0 0 18px;
+    }
+
+    .dl .big {
+      height: 400px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: #3a3a3a;
+      overflow: hidden;
+    }
+
+    .dl .big img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .b1 {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #0a0a0a;
+      color: #fff;
+      font: 700 10px monospace;
+      border-radius: 99px;
+      padding: 4px 10px;
+      z-index: 1;
+    }
+
+    .thr {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .thr button {
+      flex: 1;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      background: var(--bg);
+    }
+
+    .thr .a {
+      border-color: var(--ink);
+    }
+
+    .rt {
+      padding: 24px;
+    }
+
+    .rt .hd {
+      display: flex;
+      justify-content: space-between;
+      font: 11px monospace;
+      color: var(--mut);
+      margin-right: 30px;
+    }
+
+    .rt h3 {
+      font-size: 26px;
+      margin: 10px 0 2px;
+      letter-spacing: -.02em;
+    }
+
+    .rt .pp {
+      font: 800 24px 'Plus Jakarta Sans';
+    }
+
+    .note {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--mut);
+      margin: 12px 0;
+    }
+
+    .sp {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin: 10px 0 16px;
+      font-size: 12px;
+    }
+
+    .sp div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sp div:first-child {
+      border: 0;
+    }
+
+    .sp span {
+      color: var(--mut);
+    }
+
+    .sp b {
+      text-align: right;
+    }
+
+    .rt .bk {
+      width: 100%;
+      border-radius: 99px;
+      padding: 14px;
+      letter-spacing: .04em;
+      font-size: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .dt {
+        grid-template-columns: 1fr;
+      }
+      .dl {
+        border-radius: 18px 18px 0 0;
+      }
+    }
+
+    #prof {
+      display: none;
+    }
+
+    .pfh {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 90px 24px 30px;
+    }
+
+    .pfh .wrap {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .pfh .av {
+      width: 64px;
+      height: 64px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      font-size: 24px;
+    }
+
+    .pfh b {
+      font-size: 20px;
+      display: block;
+    }
+
+    .pfh small {
+      color: #bbb;
+    }
+
+    .pfh .ib {
+      margin-left: auto;
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+    }
+
+    .pc {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .pc .hr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .pc .hr button {
+      font-size: 13px;
+      color: var(--mut);
+      display: flex;
+      align-items: center;
+    }
+
+    .ro {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 8px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .ro button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      padding: 8px;
+    }
+
+    .ro .cnt {
+      top: 0;
+      right: calc(50% - 22px);
+    }
+
+    .ep {
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 32px;
+    }
+
+    .ep label {
+      display: block;
+      font-size: 12px;
+      color: var(--mut);
+      margin-top: 4px;
+    }
+
+    .ep .g {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+    }
+
+    .ep .av {
+      width: 100px;
+      height: 100px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      font-size: 36px;
+      background: var(--soft);
+      color: var(--ink);
+      margin: 0 auto 12px;
+    }
+
+    .ep .sb {
+      text-align: center;
+      font-size: 12px;
+      color: var(--mut);
+    }
+
+    .ep .sb button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    @media (max-width: 700px) {
+      .ep {
+        grid-template-columns: 1fr;
+      }
+      .ep .sb {
+        order: -1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Quantity + stock display, seller form */
+    .stk { color: var(--mut); font-weight: 700; }
+    .stk.x { color: #c0392b; }
+    .stp { display: inline-flex; align-items: center; gap: 8px; margin-left: 8px; }
+    .stp button { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--soft); color: var(--ink); line-height: 1; }
+    .f select { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; }
+  </style>
+</head>
+<body>
+  <div id="home">
+    <div class="hero">
+      <div class="top">
+        <div class="logo"><i>U</i>Ukayarn</div>
+        <div class="icons">
+          <button id="acct" aria-label="Account"></button>
+          <button id="bag" aria-label="Open bag"></button>
+        </div>
+      </div>
+      <h1>Ukayarn</h1>
+      <p>One-of-one thrift, reserved with a click.</p>
+      <div class="pills">
+        <button class="pill" onclick="view('shop')">Browse Ukay Catalog</button>
+        <button class="pill d" onclick="go('surprise')">Shuffle &amp; Surprise Me</button>
+      </div>
+      <div class="search" id="sb">
+        <input id="q" placeholder="Search tops, pants, jackets, bags..." aria-label="Search catalog">
+      </div>
+    </div>
+
+    <div class="wrap feat" id="ft"></div>
+
+    <div class="wrap">
+      <section id="surprise">
+        <div class="sur">
+          <div class="sc">
+            <div class="hd2">
+              <h3>Surprise me</h3>
+              <button class="rst" id="rs"></button>
+            </div>
+            <small>Generate a random piece from one category, or let the system pair a complete outfit from available stock.</small>
+            <button class="btn" id="roll">Surprise me!</button>
+            <select id="mode" aria-label="Shuffle mode">
+              <option value="full">Full Outfit (Top + Bottom + Layer/Bag)</option>
+              <option value="Tops">Individual: Tops &amp; Tees</option>
+              <option value="Bottoms">Individual: Pants &amp; Bottoms</option>
+              <option value="Outerwear">Individual: Jackets &amp; Outerwear</option>
+              <option value="Bags">Individual: Bags &amp; Accessories</option>
+            </select>
+          </div>
+          <div class="out" id="out">
+            <div class="empty">
+              <b>Ready to shuffle your next ukay pick!</b>
+              Choose Full Outfit or one category, then press Surprise me.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="drops">
+        <div class="hd2">
+          <h2>Latest Drops!</h2>
+          <button class="sa" onclick="view('shop')">See all items &rarr;</button>
+        </div>
+        <div class="tabs" id="tabs"></div>
+        <div class="grid" id="gd"></div>
+      </section>
+
+      <section id="why" class="two">
+        <div>
+          <h2>What sets us apart?</h2>
+          <p style="color:var(--mut);max-width:340px">
+            Traditional ukay-ukay means digging through messy racks, and social thrifting relies on chaotic "mine" comments and DMs. Ukayarn puts the whole experience in one organized place.
+          </p>
+        </div>
+        <div class="acc" id="acc"></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="shop">
+    <div class="wrap">
+      <div class="hd2">
+        <h2>All Items</h2>
+        <small id="sc2" style="color:var(--mut)"></small>
+      </div>
+      <div class="fb">
+        <input id="sq" placeholder="Search all items..." aria-label="Search">
+        <select id="ss" aria-label="Size">
+          <option value="">All sizes</option>
+          <option>Small</option>
+          <option>Medium</option>
+          <option>Large</option>
+          <option>One Size</option>
+        </select>
+        <select id="so" aria-label="Sort">
+          <option value="new">Newest</option>
+          <option value="lo">Price: low to high</option>
+          <option value="hi">Price: high to low</option>
+        </select>
+      </div>
+      <div class="tabs" id="stabs"></div>
+      <div class="grid" id="sg"></div>
+    </div>
+  </div>
+
+  <div id="prof">
+    <div class="pfh"><div class="wrap" id="pfh"></div></div>
+    <div class="wrap" id="pfb"></div>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <div class="logo" style="font-size:30px"><i style="width:40px;height:40px"></i>Ukayarn</div>
+        <p>Curated online thrift store and single-piece reservation platform bringing ukay-ukay hunting into an organized digital space.</p>
+      </div>
+      <div>
+        <h5>Browse</h5>
+        <a onclick="nv('home')">Home</a>
+        <a onclick="nv('surprise')">Surprise Me</a>
+        <a onclick="nv('drops')">Latest Drops</a>
+        <a onclick="view('shop')">All Items</a>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="nav" id="nav">
+    <button class="av" id="nav-av" onclick="acct()" aria-label="Account"></button>
+    <a href="#" onclick="nv('surprise');return false">Surprise Me</a>
+    <a href="#" onclick="nv('drops');return false">Drops</a>
+    <a href="#" onclick="nv('why');return false">Why Us</a>
+    <button class="bg" onclick="drawer(1)" aria-label="Open bag">
+      <span id="nb"></span>
+      <b id="nc">0</b>
+    </button>
+  </nav>
+
+  <button class="fl" id="fl" onclick="view('home')" aria-label="Ukayarn home"><i>U</i>Ukayarn</button>
+  <button class="tt" id="tt" onclick="scrollTo(0,0)" aria-label="Back to top"></button>
+
+  <div class="ov" id="ov"><div class="md" id="md"></div></div>
+
+  <aside class="dr" id="dr" aria-label="Bag">
+    <div style="display:flex;justify-content:space-between">
+      <h3 style="margin:0">Your bag</h3>
+      <button onclick="drawer(0)" aria-label="Close" id="dx"></button>
+    </div>
+    <div class="lst" id="lst"></div>
+    <div style="padding-top:12px">
+      <div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:10px">
+        <span>Total</span>
+        <span id="tot"></span>
+      </div>
+      <button class="bk" style="width:100%" id="co">Checkout</button>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =========================================================================
+    // 1. API & PRODUCT DATA (everything comes from the MySQL database)
+    // =========================================================================
+    const API = '../BACK_END/api.php';   // connects the front end to the back end
+    const escHtml = (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]);
+    const clean = (v) =>
+      typeof v === 'string' ? v.replace(/[&<>"]/g, escHtml)
+        : Array.isArray(v) ? v.map(clean)
+        : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, clean(x)]))
+        : v;
+
+    async function api(action, body, isForm) {
+      const opts = body
+        ? { method: 'POST', body: isForm ? body : JSON.stringify(body), headers: isForm ? {} : { 'Content-Type': 'application/json' } }
+        : {};
+      const res = await fetch(`${API}?action=${action}`, opts);
+      const data = await res.json().catch(() => ({ error: 'Server error. Is XAMPP (Apache + MySQL) running?' }));
+      if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+      return clean(data);
+    }
+
+    let ITEMS = [];
+    const loadItems = async () => { ITEMS = await api('items'); };
+
+    // =========================================================================
+    // 2. ICONS, COLORS & PAGE TEXT
+    // =========================================================================
+    const UI_ICONS = {
+      shirt: 'M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z',
+      pants: 'M7 3h10l1 18h-4l-2-10-2 10H6z',
+      jacket: 'M9 3 4 6v15h5V10h6v11h5V6l-5-3-3 4z|M12 7v14',
+      bag: 'M5 8h14l1 13H4z|M9 8V6a3 3 0 0 1 6 0v2',
+      user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z|M4 21a8 8 0 0 1 16 0',
+      lock: 'M6 11h12v10H6z|M8 11V8a4 4 0 0 1 8 0v3',
+      shuffle: 'M3 7h4l10 10h4|M3 17h4l3-3|M14 10l3-3h4|M18 4l3 3-3 3|M18 14l3 3-3 3',
+      pencil: 'M4 20l1-4L16 5l3 3L8 19z|M14 7l3 3',
+      ticket: 'M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z',
+      bank: 'M3 10l9-6 9 6z|M5 10v8|M10 10v8|M14 10v8|M19 10v8|M3 20h18',
+      card: 'M3 6h18v12H3z|M3 10h18',
+      box: 'M3 8l9-5 9 5v8l-9 5-9-5z|M3 8l9 5 9-5|M12 13v8',
+      truck: 'M2 6h12v10H2z|M14 10h4l3 3v3h-7|M6 17.5a1.5 1.5 0 1 0 .01 0|M17 17.5a1.5 1.5 0 1 0 .01 0',
+      x: 'M5 5l14 14|M19 5L5 19',
+      up: 'M12 19V5|M5 12l7-7 7 7',
+      reset: 'M4 4v6h6|M5.5 15a8 8 0 1 0 1.5-7L4 10',
+      chev: 'M9 5l7 7-7 7',
+      ruler: 'M3 16L16 3l5 5L8 21z|M8 11l2 2|M11 8l2 2'
+    };
+
+    const CAT_ICON = {
+      Tops: 'shirt',
+      Bottoms: 'pants',
+      Outerwear: 'jacket',
+      Bags: 'bag'
+    };
+
+    const CAT_BG = {
+      Tops: '#f3e3c8',
+      Bottoms: '#cdd6e0',
+      Outerwear: '#d9d2c3',
+      Bags: '#d8d8d8'
+    };
+
+    const FEATURES_LIST = [
+      ['shirt', 'Hassle-Free Online Browsing', 'Skip the heat, crowds, and checking hangers one by one. Browse handpicked, pre-washed ukay organized neatly by category and size.'],
+      ['lock', 'One-Click "Mine" & Lock', 'Better than Instagram comments and messy DMs. Check out and your 1-of-1 piece is locked, so no double-selling.'],
+      ['shuffle', 'Smart Shuffle & Outfit Picker', "Can't decide? Shuffle one piece per category or build a full outfit from live available stock."]
+    ];
+
+    const ACCORDION_LIST = [
+      ['lock', 'Automated "Mine" Lock vs. Messy Instagram Comment Wars', 'On Instagram, sellers track "mine" comments and DMs by hand, which leads to confusion and double-selling. On Ukayarn, tap Mine to add a piece to your bag. Once you check out, the item is locked to your order and shows as Sold for everyone else.'],
+      ['ruler', 'Verified Flat-Lay Measurements & Honest Condition Specs', 'Thrift sizes vary wildly across vintage brands. Every listing includes exact flat-lay bust, waist, and length tape measurements plus condition ratings, so you know the fit before buying.'],
+      ['shuffle', 'Category Shuffle, Outfit Builder & Order Reference Codes', 'Use Surprise Me to shuffle one category or generate a full outfit. Then place your order like any online shop: pay by GCash or COD and get an Order Reference Number right away to verify payment and track your order.']
+    ];
+
+    // =========================================================================
+    // 3. HELPERS & STATE
+    // =========================================================================
+    const $ = (sel) => document.querySelector(sel);
+    const fmtPrice = (num) => '₱' + num.toLocaleString();
+    const iconSvg = (name, size = 20) => {
+      const pathData = UI_ICONS[name] || '';
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${pathData.split('|').map((d) => `<path d="${d}"/>`).join('')}</svg>`;
+    };
+    const itemVisual = (item, size = 72, alt = '') =>
+      item.img
+        ? `<img src="${item.img}" alt="${alt || item.name}">`
+        : iconSvg(CAT_ICON[item.cat], size);
+
+
+    let bagItems = [];   // item ids in the bag
+    let bagQty = {};     // item id -> quantity chosen
+    let holdTimers = {};
+    let orderList = [];
+    let me = null;       // logged-in user (from the database)
+    let dropFilter = 'All';
+    let currentView = 'home';
+    let afterAuthCallback = null;
+    let pendingAvatar = null;
+    let lastOutfit = [];
+    let payMethod = 'GCash';
+    let shopSearch = '';
+    let shopCat = 'All';
+
+    const getUser = () => me;
+    const isSold = (item) => item.qty < 1;
+    const getAvail = (cat) => ITEMS.filter((i) => !isSold(i) && (!cat || i.cat === cat));
+    const isInBag = (id) => bagItems.includes(id);
+    const findItem = (id) => ITEMS.find((i) => i.id === id);
+    const bagTotal = () => bagItems.reduce((sum, id) => sum + findItem(id).price * bagQty[id], 0);
+    const unitCount = (items) => items.reduce((sum, it) => sum + it.qty, 0);
+
+    async function refreshMe() {
+      me = (await api('me')).user;
+      orderList = me ? (await api('my_orders')).orders : [];
+    }
+
+    // Keep the bag in line with live stock (someone else may have bought a piece).
+    function syncBag() {
+      bagItems = bagItems.filter((id) => findItem(id) && !isSold(findItem(id)));
+      bagItems.forEach((id) => { bagQty[id] = Math.min(bagQty[id], findItem(id).qty); });
+    }
+    const itemCode = (item) => 'UKY-' + String(item.id).padStart(3, '0');
+    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const avatarHtml = (u) =>
+      u ? (u.avatar ? `<img src="${u.avatar}" alt="">` : (u.name || u.username)[0].toUpperCase()) : iconSvg('user', 18);
+
+    function showToast(msg) {
+      const el = $('#toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => {
+        el.style.display = 'none';
+      }, 1800);
+    }
+
+    function go(id) {
+      document.getElementById(id).scrollIntoView();
+    }
+
+    function view(nextView) {
+      currentView = nextView;
+      $('#home').style.display = nextView === 'home' ? '' : 'none';
+      $('#prof').style.display = nextView === 'prof' ? 'block' : 'none';
+      $('#shop').style.display = nextView === 'shop' ? 'block' : 'none';
+      scrollTo(0, 0);
+      if (nextView === 'prof') renderProf();
+      if (nextView === 'shop') renderShop();
+      onScroll();
+    }
+
+    function nv(id) {
+      if (currentView !== 'home') view('home');
+      if (id !== 'home') go(id);
+    }
+
+    // =========================================================================
+    // 4. CATALOG CARDS, BAG & PRODUCT DETAIL MODAL
+    // =========================================================================
+    function renderCard(item) {
+      const out = isSold(item);
+      const disabledAttr = out || isInBag(item.id) ? 'disabled' : '';
+      const btnText = out ? 'Out of stock' : isInBag(item.id) ? 'In bag' : 'Mine';
+      return `
+        <div class="card ${out ? 'sold' : ''}">
+          <div class="im" style="background:${CAT_BG[item.cat]}" onclick="detail(${item.id})" role="button" aria-label="View ${item.name}">
+            <span class="tag">${item.cat}</span>
+            ${itemVisual(item, 72, item.name)}
+          </div>
+          <h4>${item.name}</h4>
+          <small>${item.widthBust}</small>
+          <small class="stk ${out ? 'x' : ''}">${out ? 'Out of stock' : 'Qty: ' + item.qty + ' available'}</small>
+          <div class="pr">
+            <b>${fmtPrice(item.price)}</b>
+            <button class="add" ${disabledAttr} onclick="mine(${item.id})">${btnText}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const latest = [...ITEMS].reverse().filter((i) => dropFilter === 'All' || i.cat === dropFilter).slice(0, 8);
+      if (currentView === 'shop') renderShop();
+
+      $('#gd').innerHTML = latest.length
+        ? latest.map(renderCard).join('')
+        : '<p style="color:var(--mut)">No matches. Try another category or keyword.</p>';
+
+      $('#tabs').innerHTML = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Bags']
+        .map((t) => `<button class="${t === dropFilter ? 'a' : ''}" onclick="dropFilter='${t}';render()">${t}</button>`)
+        .join('');
+
+      const count = bagItems.reduce((sum, id) => sum + bagQty[id], 0);
+      $('#nc').textContent = count;
+      $('#bag').innerHTML = iconSvg('bag') + `<span class="cnt">${count}</span>`;
+      $('#nb').innerHTML = iconSvg('bag', 16);
+      $('#dx').innerHTML = iconSvg('x');
+
+      const user = getUser();
+      $('#acct').innerHTML = user
+        ? `<span class="av" style="width:24px;height:24px;font-size:12px;background:#0a0a0a;color:#fff">${avatarHtml(user)}</span>`
+        : iconSvg('user');
+      $('#nav-av').innerHTML = avatarHtml(user);
+
+      $('#lst').innerHTML = count
+        ? bagItems.map((id) => {
+            const item = findItem(id);
+            return `
+              <div class="ci">
+                <div class="th" style="background:${CAT_BG[item.cat]}">${itemVisual(item, 28, item.name)}</div>
+                <div>
+                  <b style="font-size:13px">${item.name}</b><br>
+                  <small>${fmtPrice(item.price)} each</small>
+                  <span class="stp">
+                    <button onclick="setQty(${id},-1)" aria-label="Less">&minus;</button>
+                    <b>${bagQty[id]}</b>
+                    <button onclick="setQty(${id},1)" aria-label="More">+</button>
+                  </span>
+                  <small class="hold" data-id="${id}"></small>
+                </div>
+                <button onclick="dropItem(${id})" aria-label="Remove">${iconSvg('x', 16)}</button>
+              </div>
+            `;
+          }).join('')
+        : '<p style="color:var(--mut)">Your bag is empty. Mine a piece to start.</p>';
+
+      $('#tot').textContent = fmtPrice(bagTotal());
+      $('#co').disabled = !count;
+    }
+
+    $('#q').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        shopSearch = e.target.value.trim().toLowerCase();
+        $('#sq').value = e.target.value.trim();
+        shopCat = 'All';
+        view('shop');
+      }
+    };
+
+    function mine(id, quiet) {
+      const item = findItem(id);
+      if (!item || isSold(item) || isInBag(id)) return;
+      bagItems.push(id);
+      bagQty[id] = 1;
+      holdTimers[id] = Date.now() + 900000;
+      api('add_to_cart', { id, qty: 1 }).catch(() => {});
+      render();
+      if (!quiet) showToast('Added to bag · held for 15 min');
+    }
+
+    function setQty(id, delta) {
+      const max = findItem(id).qty;
+      const next = Math.min(max, Math.max(1, bagQty[id] + delta));
+      if (delta > 0 && next === bagQty[id]) showToast('Only ' + max + ' in stock');
+      bagQty[id] = next;
+      render();
+    }
+
+    function dropItem(id) {
+      bagItems = bagItems.filter((x) => x !== id);
+      delete bagQty[id];
+      render();
+    }
+
+    function drawer(open) {
+      $('#dr').classList.toggle('on', Boolean(open));
+    }
+
+    $('#bag').onclick = () => drawer(1);
+    $('#acct').onclick = () => acct();
+
+    function acct() {
+      getUser() ? view('prof') : authM();
+    }
+
+    function modal(html, extraClass) {
+      const md = $('#md');
+      md.className = 'md ' + (extraClass || '');
+      md.innerHTML = `<button class="x" onclick="closeM()" aria-label="Close">${iconSvg('x')}</button>` + html;
+      $('#ov').classList.add('on');
+    }
+
+    function closeM() {
+      $('#ov').classList.remove('on');
+    }
+
+    $('#ov').onclick = (e) => {
+      if (e.target.id === 'ov') closeM();
+    };
+
+    function detail(id) {
+      const item = findItem(id);
+      if (!item) return;
+      const out = isSold(item);
+      const btnDisabled = out || isInBag(id) ? 'disabled' : '';
+      const btnLabel = out ? 'OUT OF STOCK' : isInBag(id) ? 'ALREADY IN BAG' : 'MINE • ADD TO BAG';
+      const stockText = out ? 'Out of stock' : item.qty + ' available';
+
+      modal(`
+        <div class="dt">
+          <div class="dl">
+            <div class="big ${out ? 'sold' : ''}" style="background:${CAT_BG[item.cat]}">
+              <span class="b1">${out ? 'OUT OF STOCK' : item.qty + ' LEFT'}</span>
+              ${itemVisual(item, 120, item.name)}
+            </div>
+          </div>
+          <div class="rt">
+            <div class="hd"><span>${item.cat.toUpperCase()} • ${itemCode(item)}</span><span>QTY: ${out ? 0 : item.qty}</span></div>
+            <h3>${item.name}</h3>
+            <div class="pp">${fmtPrice(item.price)}</div>
+            <hr style="border:0;border-top:1px solid var(--line);margin:14px 0 0">
+            <div class="note"><b style="color:var(--ink)">Stock:</b> ${stockText}. Clicking <b style="color:var(--ink)">Mine</b> adds it to your bag; once the last piece is bought it shows as out of stock. Sold by ${item.seller}.</div>
+            <b style="font-size:12px;letter-spacing:.06em">DESCRIPTION &amp; SPECIFICATIONS</b>
+            <p style="color:var(--mut);font-size:13px;margin:8px 0">${item.desc}</p>
+            <div class="sp">
+              <div><span>Size</span><b>${item.size}</b></div>
+              <div><span>Width / Bust</span><b>${item.widthBust}</b></div>
+              <div><span>Height / Length</span><b>${item.heightLen}</b></div>
+              <div><span>Condition</span><b>${item.cond}</b></div>
+              <div><span>Stock</span><b>${stockText}</b></div>
+            </div>
+            <button class="bk" ${btnDisabled} onclick="mine(${id});closeM()">${btnLabel}</button>
+          </div>
+        </div>
+      `, 'w2');
+    }
+
+    function thumb(btn) {
+      btn.parentNode.querySelectorAll('button').forEach((x) => x.classList.toggle('a', x === btn));
+    }
+
+    // =========================================================================
+    // 5. SURPRISE ME SHUFFLER
+    // =========================================================================
+    $('#roll').onclick = () => {
+      const modeVal = $('#mode').value;
+      const out = $('#out');
+      if (modeVal === 'full') {
+        const topItem = pickRandom(getAvail('Tops'));
+        const botItem = pickRandom(getAvail('Bottoms'));
+        const extraItem = pickRandom([...getAvail('Outerwear'), ...getAvail('Bags')]);
+        if (!topItem || !botItem || !extraItem) {
+          out.innerHTML = '<div class="empty"><b>Not enough stock for a full outfit</b>Try a single category instead.</div>';
+          return;
+        }
+        lastOutfit = [topItem, botItem, extraItem];
+        const outfitTotal = lastOutfit.reduce((sum, i) => sum + i.price, 0);
+        out.innerHTML = `
+          <div class="ob">
+            <span><b>Generated Full Outfit</b><em>${fmtPrice(outfitTotal)}</em></span>
+            <span style="display:flex;gap:8px">
+              <button class="rst l" onclick="$('#rs').click()">Restart</button>
+              <button class="bk" id="mo">Mine Outfit</button>
+            </span>
+          </div>
+          <div class="og">
+            ${lastOutfit.map((i) => `
+              <div class="oi" onclick="detail(${i.id})">
+                <div class="th" style="background:${CAT_BG[i.cat]}">${itemVisual(i, 28, i.name)}</div>
+                <div>
+                  <small>${i.cat}</small>
+                  <b>${i.name}</b>
+                  <span style="font-size:12px;color:var(--mut)">${i.widthBust}</span>
+                  <b>${fmtPrice(i.price)}</b>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        $('#mo').onclick = () => {
+          lastOutfit.forEach((i) => mine(i.id, 1));
+          drawer(1);
+        };
+      } else {
+        const singleItem = pickRandom(getAvail(modeVal));
+        if (!singleItem) {
+          out.innerHTML = '<div class="empty"><b>Nothing left here</b>Everything in this category is sold.</div>';
+          return;
+        }
+        out.innerHTML = `<div class="grid" style="max-width:240px">${renderCard(singleItem)}</div>`;
+      }
+    };
+
+    $('#rs').onclick = () => {
+      lastOutfit = [];
+      $('#mode').value = 'full';
+      $('#out').innerHTML = '<div class="empty"><b>Ready to shuffle your next ukay pick!</b>Choose Full Outfit or one category, then press Surprise me.</div>';
+    };
+
+    $('#tt').innerHTML = iconSvg('up');
+    $('#rs').innerHTML = iconSvg('reset', 12) + 'Restart';
+
+    // =========================================================================
+    // 6. AUTH, CHECKOUT, CANCEL ORDER & PROFILE
+    // =========================================================================
+    function authM(after, tab) {
+      afterAuthCallback = after || null;
+      const isLogin = (tab || 'in') === 'in';
+      modal(`
+        <div class="au">
+          <div class="al">
+            <div class="logo"><i>U</i>ukayarn</div>
+            <div>
+              <div class="big">U</div>
+              <h2 style="margin:0;font-size:28px">ukayarn</h2>
+              <p>Curated ukay, locked 1-of-1. Sign in or create an account to set up your delivery info and reserve single-piece finds.</p>
+            </div>
+            <div class="ab"><span>1-OF-1 RESERVATION</span><span>NO COMMENT WARS</span></div>
+          </div>
+          <div class="ar">
+            <div class="seg">
+              <button class="${isLogin ? 'a' : ''}" onclick="authM(afterAuthCallback,'in')">Log In</button>
+              <button class="${isLogin ? '' : 'a'}" onclick="authM(afterAuthCallback,'up')">Create Account</button>
+            </div>
+            <h3>${isLogin ? 'Log In' : 'Create account'}</h3>
+            <small>${isLogin ? 'Access your reservation bag, order logs, and delivery profile.' : 'After signing up, set up your delivery address and number in your profile.'}</small>
+            <div class="f">
+              ${isLogin
+                ? '<input id="a1" placeholder="Email or Username" autocomplete="username"><input id="a3" type="password" placeholder="Password" autocomplete="current-password">'
+                : '<input id="a0" placeholder="Username" autocomplete="username"><input id="a1" type="email" placeholder="Email" autocomplete="email"><input id="a3" type="password" placeholder="Password (6+ characters)" autocomplete="new-password"><label style="font-size:13px;display:flex;gap:8px;align-items:center"><input id="a4" type="checkbox" style="width:auto"> I also want to sell on Ukayarn</label>'}
+            </div>
+            <div class="err" id="er"></div>
+            <button class="bk" onclick="${isLogin ? 'doLogin()' : 'doSignup()'}">${isLogin ? 'LOG IN' : 'Create'}</button>
+            <p style="text-align:center;font-size:12px;color:var(--mut)">
+              ${isLogin
+                ? 'New to ukayarn? <button class="ln" onclick="authM(afterAuthCallback,\'up\')">Create account</button>'
+                : 'Already have an account? <button class="ln" onclick="authM(afterAuthCallback,\'in\')">Log In</button>'}
+            </p>
+            <p style="text-align:center;font-size:10px;color:var(--mut);margin:0">By continuing, you agree to ukayarn’s 1-of-1 reservation terms.</p>
+          </div>
+        </div>
+      `, 'w');
+    }
+
+    async function authDone(user) {
+      me = user;
+      orderList = (await api('my_orders')).orders;
+      closeM();
+      render();
+      showToast('Welcome, ' + (user.name || user.username));
+      const cb = afterAuthCallback;
+      afterAuthCallback = null;
+      if (cb) cb();
+    }
+
+    async function doLogin() {
+      try {
+        authDone((await api('login', { id: $('#a1').value.trim(), password: $('#a3').value })).user);
+      } catch (err) {
+        $('#er').textContent = err.message;
+      }
+    }
+
+    async function doSignup() {
+      try {
+        const res = await api('signup', {
+          username: $('#a0').value.trim(),
+          email: $('#a1').value.trim(),
+          password: $('#a3').value,
+          seller: $('#a4').checked
+        });
+        authDone(res.user);
+      } catch (err) {
+        $('#er').textContent = err.message;
+      }
+    }
+
+    async function logout() {
+      await api('logout', {}).catch(() => {});
+      me = null;
+      orderList = [];
+      render();
+      view('home');
+    }
+
+    $('#co').onclick = () => {
+      const user = getUser();
+      if (!user) {
+        drawer(0);
+        authM(() => $('#co').click());
+        return;
+      }
+      drawer(0);
+      payMethod = 'GCash';
+      const sub = bagTotal();
+      const voucher = user.vouchers.find((x) => !x.used);
+      const disc = voucher ? Math.min(voucher.off, sub) : 0;
+
+      modal(`
+        <h3>Checkout</h3>
+        ${bagItems.map((id) => `<div style="display:flex;justify-content:space-between;font-size:13px"><span>${findItem(id).name} × ${bagQty[id]}</span><span>${fmtPrice(findItem(id).price * bagQty[id])}</span></div>`).join('')}
+        ${disc ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>Voucher ${voucher.code}</span><span>-${fmtPrice(disc)}</span></div>` : ''}
+        <div style="display:flex;justify-content:space-between;font-weight:800;margin-top:6px"><span>Total</span><span>${fmtPrice(sub - disc)}</span></div>
+        <div class="f">
+          <input id="fn" placeholder="Full name" value="${user.name || ''}">
+          <input id="fp" placeholder="Mobile number" value="${user.phone || ''}">
+          <textarea id="fa" rows="2" placeholder="Delivery address">${user.addr || ''}</textarea>
+          <div class="pm">
+            <button class="a" id="p1" onclick="setPay('GCash')">GCash / E-wallet</button>
+            <button id="p2" onclick="setPay('COD')">Cash on Delivery</button>
+          </div>
+        </div>
+        <div class="err" id="er"></div>
+        <button class="bk" style="width:100%" onclick="placeOrder()">Place order</button>
+      `);
+    };
+
+    function setPay(nextPay) {
+      payMethod = nextPay;
+      $('#p1').className = nextPay === 'GCash' ? 'a' : '';
+      $('#p2').className = nextPay === 'COD' ? 'a' : '';
+    }
+
+    async function placeOrder() {
+      if (!bagItems.length) {
+        closeM();
+        return;
+      }
+      try {
+        const res = await api('place_order', {
+          items: bagItems.map((id) => ({ id, qty: bagQty[id] })),
+          name: $('#fn').value.trim(),
+          phone: $('#fp').value.trim(),
+          address: $('#fa').value.trim(),
+          pay: payMethod
+        });
+        bagItems = [];
+        bagQty = {};
+        await Promise.all([loadItems(), refreshMe()]);
+        render();
+        showOrder(res.order, true);
+      } catch (err) {
+        $('#er').textContent = err.message;
+        await loadItems().catch(() => {});
+        syncBag();
+        render();
+      }
+    }
+
+    async function cancelOrder(ref) {
+      try {
+        await api('cancel_order', { ref });
+        await Promise.all([loadItems(), refreshMe()]);
+        render();
+        if (currentView === 'prof') renderProf();
+        showOrder(orderList.find((o) => o.ref === ref), false);
+        showToast('Order cancelled · item returned to stock');
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function showOrder(orderObj, fresh) {
+      const steps = ['Order placed', 'Payment check', 'Packed', 'Shipped'];
+      const isCancelled = orderObj.status === 'Cancelled';
+      modal(`
+        <h3>${fresh ? 'Order placed' : 'Order summary'}</h3>
+        <small style="color:var(--mut)">Order reference number</small>
+        <div class="ref">${orderObj.ref}</div>
+        ${isCancelled
+          ? '<div class="note"><b style="color:var(--ink)">Cancelled:</b> This order was cancelled and the item(s) are available again in stock.</div>'
+          : `<div class="st">${steps.map((s, k) => `<span class="${k === 0 ? 'a' : ''}">${k === 0 ? '●' : '○'} ${s}</span>`).join('')}</div>`}
+        ${orderObj.items.map((it) => `<div style="display:flex;justify-content:space-between;font-size:13px"><span>${it.name} × ${it.qty}</span><span>${fmtPrice(it.price * it.qty)}</span></div>`).join('')}
+        ${orderObj.disc ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>Voucher</span><span>-${fmtPrice(orderObj.disc)}</span></div>` : ''}
+        <hr style="border:0;border-top:1px solid var(--line)">
+        <div style="display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span>${fmtPrice(orderObj.total)}</span></div>
+        <p style="font-size:12px;color:var(--mut)">
+          Status: ${orderObj.status} · ${orderObj.pay === 'COD' ? 'Cash on Delivery' : 'GCash / E-wallet'}<br>
+          Ship to ${orderObj.a}<br>
+          ${orderObj.at}. ${isCancelled ? 'Item released back to catalog.' : 'Your pieces are reserved for you. Keep this code for tracking.'}
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="bk" onclick="closeM()">Keep browsing</button>
+          ${!isCancelled ? `<button class="bk ghost" onclick="cancelOrder('${orderObj.ref}')">Cancel order</button>` : ''}
+        </div>
+      `);
+    }
+
+    function renderProf() {
+      const user = getUser();
+      if (!user) {
+        view('home');
+        return;
+      }
+      const activeOrders = orderList.filter((o) => o.status !== 'Cancelled');
+      const itemTotal = activeOrders.reduce((sum, o) => sum + unitCount(o.items), 0);
+      const statusCount = (st) => orderList.filter((o) => o.status === st).length;
+      const voucherCount = user.vouchers.filter((v) => !v.used).length;
+      const listed = ITEMS.filter((i) => i.sellerId === user.id).length;
+
+      $('#pfh').innerHTML = `
+        <div class="av">${avatarHtml(user)}</div>
+        <div><b>${user.name || user.username}</b><small>${itemTotal} item${itemTotal === 1 ? '' : 's'} purchased</small></div>
+        <button class="ib" onclick="editP()" aria-label="Edit profile">${iconSvg('pencil')}</button>
+      `;
+
+      $('#pfb').innerHTML = `
+        <div class="pc">
+          <div class="hr"><span>My Purchases</span><button onclick="hist('all')">View Purchase History ${iconSvg('chev', 14)}</button></div>
+          <div class="ro">
+            ${[['To Pay', 'card'], ['To Ship', 'box'], ['To Receive', 'truck']].map((row) => `
+              <button onclick="hist('${row[0]}')">
+                ${iconSvg(row[1], 28)}${row[0]}${statusCount(row[0]) ? `<span class="cnt">${statusCount(row[0])}</span>` : ''}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="pc">
+          <div class="hr"><span>Seller Center</span></div>
+          ${user.isSeller
+            ? `<div class="ro">
+                <button onclick="sellM()">${iconSvg('shirt', 28)}List an item</button>
+                <button onclick="listingsM()">${iconSvg('box', 28)}My listings<small style="color:var(--mut)">${listed} listed</small></button>
+              </div>`
+            : `<p style="color:var(--mut);margin:0 0 10px;font-size:13px">Want to sell your own ukay finds? Your buyer account can also be a seller account.</p>
+               <button class="bk" onclick="becomeSeller()">Become a seller</button>`}
+        </div>
+        <div class="pc">
+          <div class="hr"><span>My Wallet</span></div>
+          <div class="ro">
+            <button onclick="vouch()">${iconSvg('ticket', 28)}Vouchers<small style="color:var(--mut)">${voucherCount} available</small></button>
+            <button onclick="bank()">${iconSvg('bank', 28)}Bank Account<small style="color:var(--mut)">${user.bank ? 'Added' : 'Add'}</small></button>
+          </div>
+        </div>
+        <div id="hist"></div>
+        <button class="bk" style="margin:8px 0 48px" onclick="logout()">Log out</button>
+      `;
+    }
+
+    function hist(statusFilter) {
+      const user = getUser();
+      const filteredOrders = orderList.filter((o) => o.u === user.username && (statusFilter === 'all' || o.status === statusFilter));
+      $('#hist').innerHTML = `
+        <div class="pc">
+          <div class="hr"><span>${statusFilter === 'all' ? 'Purchase History' : statusFilter}</span></div>
+          ${filteredOrders.length
+            ? filteredOrders.map((o) => `
+                <div class="ci">
+                  <div><b>${o.ref}</b><br><small style="color:var(--mut)">${unitCount(o.items)} item(s) · ${fmtPrice(o.total)} · ${o.status}</small></div>
+                  <div style="display:flex;gap:6px">
+                    <button class="add" onclick="showOrder(orderList.find(x=>x.ref==='${o.ref}'))">View</button>
+                    ${o.status !== 'Cancelled' ? `<button class="add" style="background:var(--soft);color:var(--ink);border:1px solid var(--line)" onclick="cancelOrder('${o.ref}')">Cancel</button>` : ''}
+                  </div>
+                </div>
+              `).join('')
+            : '<p style="color:var(--mut);margin:0">Nothing here yet.</p>'}
+        </div>
+      `;
+      $('#hist').scrollIntoView();
+    }
+
+    function vouch() {
+      const user = getUser();
+      modal(`
+        <h3>Vouchers</h3>
+        ${user.vouchers.map((v) => `
+          <div class="ci">
+            <div><b>${v.code}</b><br><small style="color:var(--mut)">${fmtPrice(v.off)} off your order · ${v.used ? 'Used' : 'Applies at checkout'}</small></div>
+          </div>
+        `).join('')}
+      `);
+    }
+
+    function bank() {
+      const user = getUser();
+      modal(`
+        <h3>Bank / E-wallet</h3>
+        <div class="f"><input id="bk" placeholder="Bank or GCash account (name and number)" value="${user.bank || ''}"></div>
+        <button class="bk" onclick="saveBank()">Save</button>
+      `);
+    }
+
+    async function saveBank() {
+      try {
+        me = (await api('update_profile', { bank: $('#bk').value.trim() })).user;
+        closeM();
+        renderProf();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    // ---- Seller Center: any account can become a seller ----
+    async function becomeSeller() {
+      try {
+        me = (await api('become_seller', {})).user;
+        renderProf();
+        showToast('You are now a seller');
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    const SELL_FIELDS = [
+      ['name', 'Item name'], ['price', 'Price (₱)', 'number'], ['quantity', 'Quantity', 'number'],
+      ['size', 'Size (e.g. Medium Fit)'], ['widthBust', 'Width / Bust (e.g. Bust: 36–38")'],
+      ['heightLen', 'Length (e.g. 25")'], ['cond', 'Condition (e.g. 9/10, no stains)']
+    ];
+
+    function sellM() {
+      modal(`
+        <h3>List an item</h3>
+        <div class="f">
+          ${SELL_FIELDS.map(([key, label, type]) => `<input id="s_${key}" type="${type || 'text'}" ${type ? 'min="1"' : ''} placeholder="${label}">`).join('')}
+          <select id="s_category" aria-label="Category">${['Tops', 'Bottoms', 'Outerwear', 'Bags'].map((c) => `<option>${c}</option>`).join('')}</select>
+          <textarea id="s_desc" rows="2" placeholder="Description"></textarea>
+          <label style="font-size:12px;color:var(--mut)">Photo (JPG, PNG or WEBP, max 2 MB)</label>
+          <input id="s_image" type="file" accept="image/jpeg,image/png,image/webp">
+        </div>
+        <div class="err" id="er"></div>
+        <button class="bk" onclick="saveListing()">Publish listing</button>
+      `);
+    }
+
+    async function saveListing() {
+      const form = new FormData();
+      SELL_FIELDS.forEach(([key]) => form.append(key, $('#s_' + key).value.trim()));
+      form.append('category', $('#s_category').value);
+      form.append('desc', $('#s_desc').value.trim());
+      if ($('#s_image').files[0]) form.append('image', $('#s_image').files[0]);
+      try {
+        await api('add_item', form, true);
+        await loadItems();
+        closeM();
+        render();
+        if (currentView === 'prof') renderProf();
+        showToast('Item listed');
+      } catch (err) {
+        $('#er').textContent = err.message;
+      }
+    }
+
+    function listingsM() {
+      const mine = ITEMS.filter((i) => i.sellerId === getUser().id);
+      modal(`
+        <h3>My listings</h3>
+        ${mine.length ? mine.map((i) => `
+          <div class="ci">
+            <div><b>${i.name}</b><br><small style="color:var(--mut)">${fmtPrice(i.price)} · ${isSold(i) ? 'Out of stock' : i.qty + ' in stock'}</small></div>
+            <div style="display:flex;gap:6px">
+              <input id="q${i.id}" type="number" min="0" value="${i.qty}" style="width:64px" aria-label="Quantity">
+              <button class="add" onclick="restock(${i.id})">Save</button>
+            </div>
+          </div>`).join('') : '<p style="color:var(--mut)">You have not listed anything yet.</p>'}
+      `);
+    }
+
+    async function restock(id) {
+      try {
+        await api('set_stock', { id, quantity: Number($('#q' + id).value) });
+        await loadItems();
+        render();
+        showToast('Stock updated');
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function editP() {
+      const user = getUser();
+      pendingAvatar = null;
+      $('#pfb').innerHTML = `
+        <div class="pc">
+          <button onclick="renderProf()" style="font-size:13px;color:var(--mut)">&larr; Back to profile</button>
+          <h3 style="margin:10px 0 2px">My profile</h3>
+          <small style="color:var(--mut)">Manage and protect your account</small>
+          <div class="ep" style="margin-top:14px">
+            <div class="f" style="margin:0">
+              <label>Username</label><b>${user.username}</b>
+              <label for="en">Name</label><input id="en" value="${user.name || ''}">
+              <label for="ee">Email</label><input id="ee" type="email" value="${user.email}">
+              <label for="ep">Phone number</label><input id="ep" value="${user.phone || ''}">
+              <label for="ea">Delivery address</label><textarea id="ea" rows="2">${user.addr || ''}</textarea>
+              <label>Gender</label>
+              <div class="g">${['Male', 'Female', 'Other'].map((g) => `<label style="margin:0;color:var(--ink)"><input type="radio" name="eg" value="${g}" ${user.gender === g ? 'checked' : ''}> ${g}</label>`).join('')}</div>
+              <label for="ed">Date of birth</label><input id="ed" type="date" value="${user.dob || ''}">
+              <div class="err" id="er"></div>
+              <button class="bk" onclick="saveP()">Save</button>
+            </div>
+            <div class="sb">
+              <div class="av" id="pv">${avatarHtml(user)}</div>
+              <button onclick="$('#pf').click()">Select Image</button>
+              <input id="pf" type="file" accept="image/jpeg,image/png" hidden onchange="pickImg(this)"><br>
+              File size: maximum 1 MB<br>
+              File extension: .JPEG, .PNG
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function pickImg(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+      if (!/^image\/(jpeg|png)$/.test(file.type) || file.size > 1048576) {
+        $('#er').textContent = 'Use a .JPEG or .PNG file under 1 MB.';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingAvatar = reader.result;
+        $('#pv').innerHTML = `<img src="${pendingAvatar}" alt="">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveP() {
+      const em = $('#ee').value.trim();
+      if (!/^\S+@\S+\.\S+$/.test(em)) {
+        $('#er').textContent = 'Enter a valid email.';
+        return;
+      }
+      const genderEl = document.querySelector('[name=eg]:checked');
+      try {
+        me = (await api('update_profile', {
+          name: $('#en').value.trim(),
+          email: em,
+          phone: $('#ep').value.trim(),
+          addr: $('#ea').value.trim(),
+          dob: $('#ed').value,
+          gender: genderEl ? genderEl.value : '',
+          avatar: pendingAvatar || undefined
+        })).user;
+        render();
+        renderProf();
+        showToast('Profile saved');
+      } catch (err) {
+        $('#er').textContent = err.message;
+      }
+    }
+
+    // =========================================================================
+    // 7. FEATURES, ACCORDION, NAVIGATION, SHOP & TIMER
+    // =========================================================================
+    $('#ft').innerHTML = FEATURES_LIST
+      .map((row) => `<div><b>${iconSvg(row[0], 18)}${row[1]}</b><span>${row[2]}</span></div>`)
+      .join('');
+
+    function acc(openIdx) {
+      $('#acc').innerHTML = ACCORDION_LIST
+        .map((row, idx) => {
+          const isOpen = idx === openIdx;
+          return `
+            <div class="ac ${isOpen ? 'o' : ''}">
+              <button onclick="acc(${isOpen ? -1 : idx})" aria-expanded="${isOpen}">
+                <span>${iconSvg(row[0], 16)}${row[1]}</span>
+                <span>${isOpen ? '−' : '+'}</span>
+              </button>
+              <div>${row[2]}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    acc(-1);
+
+    const navLinks = [...document.querySelectorAll('#nav a')];
+
+    function onScroll() {
+      const past = currentView !== 'home' || scrollY > $('#sb').getBoundingClientRect().bottom + scrollY;
+      $('#nav').classList.toggle('on', past);
+      $('#fl').classList.toggle('on', past);
+      $('#tt').classList.toggle('on', scrollY > 400);
+
+      let curSection = '';
+      if (currentView === 'home') {
+        ['surprise', 'drops', 'why'].forEach((id) => {
+          if (document.getElementById(id).getBoundingClientRect().top < innerHeight * 0.4) curSection = id;
+        });
+      }
+      const mapLabel = { surprise: 'Surprise Me', drops: 'Drops', why: 'Why Us' };
+      navLinks.forEach((link) => link.classList.toggle('a', link.textContent === mapLabel[curSection]));
+    }
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeM();
+        drawer(0);
+      }
+    });
+
+    function renderShop() {
+      const sz = $('#ss').value;
+      const so = $('#so').value;
+      const filtered = ITEMS.filter(
+        (i) => (shopCat === 'All' || i.cat === shopCat) && (!sz || i.size.startsWith(sz)) && (i.name + ' ' + i.cat).toLowerCase().includes(shopSearch)
+      );
+      if (so === 'lo') filtered.sort((a, b) => a.price - b.price);
+      else if (so === 'hi') filtered.sort((a, b) => b.price - a.price);
+      else filtered.reverse();
+
+      $('#sc2').textContent = filtered.length + (filtered.length === 1 ? ' item' : ' items');
+      $('#stabs').innerHTML = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Bags']
+        .map((t) => `<button class="${t === shopCat ? 'a' : ''}" onclick="shopCat='${t}';renderShop()">${t}</button>`)
+        .join('');
+      $('#sg').innerHTML = filtered.length
+        ? filtered.map(renderCard).join('')
+        : '<p style="color:var(--mut)">No matches. Try another filter.</p>';
+    }
+
+    $('#sq').oninput = (e) => {
+      shopSearch = e.target.value.trim().toLowerCase();
+      renderShop();
+    };
+    $('#ss').onchange = $('#so').onchange = renderShop;
+
+    setInterval(() => {
+      const now = Date.now();
+      const expired = bagItems.filter((id) => holdTimers[id] < now);
+      if (expired.length) {
+        bagItems = bagItems.filter((id) => !expired.includes(id));
+        showToast('A held piece was released');
+        render();
+      }
+      document.querySelectorAll('.hold').forEach((el) => {
+        const secs = Math.max(0, Math.round((holdTimers[el.dataset.id] - now) / 1000));
+        el.textContent = 'Held for you · ' + Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+      });
+    }, 1000);
+
+    // Start: load live stock + the logged-in user from the database, then refresh stock every 20 s.
+    (async () => {
+      try {
+        await Promise.all([loadItems(), refreshMe()]);
+      } catch (err) {
+        showToast(err.message);
+      }
+      render();
+      onScroll();
+      setInterval(async () => {
+        try {
+          await loadItems();
+          syncBag();
+          render();
+        } catch (err) {}
+      }, 20000);
+    })();
+  </script>
+</body>
+</html>
